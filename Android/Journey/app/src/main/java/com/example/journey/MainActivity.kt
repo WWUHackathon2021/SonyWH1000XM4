@@ -5,6 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
+import com.example.journey.UI.MapsFragment
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapFragment
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_main.*
 
 import com.fondesa.kpermissions.PermissionStatus
@@ -39,6 +47,4 @@ class MainActivity : AppCompatActivity(), PermissionRequest.Listener {
             result.allGranted() -> showGrantedToast()
         }
     }
-
-
 }
