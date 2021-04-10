@@ -8,13 +8,14 @@
 
 
     <ImageButton
-        android:id="@+id/searchImageButton"
+        android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_loginwithgoogle"
+        android:onClick="onClick"
 
+        android:src="@drawable/ic_loginwithgoogle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -28,11 +29,11 @@
         android:layout_height="wrap_content"
         android:text="@string/sign_in_with_google"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/searchImageButton"
-        app:layout_constraintEnd_toEndOf="@+id/searchImageButton"
+        app:layout_constraintBottom_toBottomOf="@+id/loginButton"
+        app:layout_constraintEnd_toEndOf="@+id/loginButton"
         app:layout_constraintHorizontal_bias="0.68"
-        app:layout_constraintStart_toStartOf="@+id/searchImageButton"
-        app:layout_constraintTop_toTopOf="@+id/searchImageButton" />
+        app:layout_constraintStart_toStartOf="@+id/loginButton"
+        app:layout_constraintTop_toTopOf="@+id/loginButton" />
 
     <TextView
         android:id="@+id/journey"
@@ -42,7 +43,7 @@
         android:text="Journey"
         android:textColor="@color/white"
         android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/searchImageButton"
+        app:layout_constraintBottom_toTopOf="@+id/loginButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.451"
         app:layout_constraintStart_toStartOf="parent"
