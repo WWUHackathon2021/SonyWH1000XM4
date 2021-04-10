@@ -1,14 +1,76 @@
 const serviceAccountKey = require("./serviceAccountKey.json");
+const { collectExp } = require("./config.json");
 const admin = require("firebase-admin");
 
 let db = null;
 
 module.exports = {
   init() {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccountKey),
+    if (!db) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccountKey),
+      });
+      db = admin.firestore();
+    }
+  },
+
+  async getProfile(id) {
+    if (id) {
+      const userDoc = await db.collection("users").doc(id).get();
+      return userDoc.data();
+    }
+  },
+
+  async getAllLandmarks() {
+    const landmarks = await db.collection("landmarks").get();
+    const result = {};
+    landmarks.docs.forEach((landmark) => {
+      result[landmark.id] = landmark.data();
     });
-    db = admin.firestore();
+    return result;
+  },
+
+  async getAllAchievements() {
+    const achievements = await db.collection("achievements").get();
+    const result = {};
+    achievements.docs.forEach((achiev) => {
+      result[achiev.id] = achiev.data();
+    });
+    return result;
+  },
+
+  async collectLandmark(userID, landID) {
+    console.log({ userID, landID });
+    if (landID && userID) {
+      const landmarkToCollect = await db
+        .collection("landmarks")
+        .doc(landID)
+        .get();
+      if (landmarkToCollect.exists) {
+        console.log({ landmarkToCollect });
+      } else {
+        throw new Error("Landmark does not exist");
+      }
+
+      const userRef = db.collection("users").doc(userID);
+      const userDoc = await userRef.get();
+      const { landmarks: existingLandmarks } = userDoc.data();
+
+      console.log({ existingLandmarks });
+
+      if (userDoc.exists) {
+        if (!existingLandmarks.includes(landID)) {
+          await userRef.update({
+            landmarks: admin.firestore.FieldValue.arrayUnion(landID),
+            exp: admin.firestore.FieldValue.increment(collectExp),
+          });
+        } else {
+          throw new Error("Landmark already claimed");
+        }
+      } else {
+        throw new Error("User does not exist");
+      }
+    }
   },
 
   testWriteDB(obj = { field: "Hello World!" }) {
