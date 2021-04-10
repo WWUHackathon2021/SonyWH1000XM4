@@ -38,6 +38,7 @@ build/
 .idea/modules.xml
 .idea/gradle.xml
 .idea/compiler.xml
+.idea/vcs.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/.name
 .idea/artifacts/dist_auto_*
