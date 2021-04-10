@@ -1,0 +1,11 @@
+{
+  "name": "sony-wh-1000xm4-server",
+  "version": "1.0.0",
+  "description": "Server code for 2021 WWU Hackathon",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
