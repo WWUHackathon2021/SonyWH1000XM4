@@ -68,3 +68,5 @@ distTmp/
 outTmp/
 /test.output
 /kotlin-native/dist
+Android/Journey/app/src/main/res/values/api_key.xml
+Android/Journey/app/src/debug/res/google_maps_api.xml
