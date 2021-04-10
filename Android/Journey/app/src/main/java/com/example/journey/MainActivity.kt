@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.example.journey.UI.MapsFragment
+import com.example.journey.UI.ProfileFragment
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -24,6 +25,7 @@ import com.fondesa.kpermissions.request.PermissionRequest
 
 
 class MainActivity : AppCompatActivity(), PermissionRequest.Listener {
+    private var profilepage = false
     private val request by lazy {
         permissionsBuilder(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION).build()
     }
@@ -34,8 +36,22 @@ class MainActivity : AppCompatActivity(), PermissionRequest.Listener {
         request.send()
 
         button.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
+
+            if (!profilepage){
+                val fragment = ProfileFragment.newInstance("","")
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .commitNow()
+
+            }
+            else {
+                val fragment = MapsFragment()
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .commitNow()
+            }
+
+            profilepage = !profilepage
         }
     }
 
