@@ -14,9 +14,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import kotlinx.android.synthetic.main.profile_ui.*
 
 
-class LoginActivity : AppCompatActivity(), View.OnClickListener {
+class LoginActivity : AppCompatActivity() {
 
     lateinit var mGoogleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
@@ -35,12 +36,15 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
+        loginButton.setOnClickListener {
+            signInTest()
+            //signIn()
+        }
+    }
 
-        val signInButton = findViewById<ImageButton>(R.id.loginButton)
-
-        signInButton.setOnClickListener(this)
-
-
+    private fun signInTest() {
+        val Intent = Intent(this, MainActivity::class.java)
+        startActivity(Intent)
     }
 
     private fun signIn() {
@@ -49,9 +53,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         startActivityForResult(signInIntent, RC_SIGN_IN);
 
     }
-    override fun onClick(view: View){
-        signIn()
-    }
+
 
 
 
