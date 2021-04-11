@@ -21,6 +21,16 @@ module.exports = {
     }
   },
 
+  async userExists(id) {
+    if (id) {
+      const userDoc = await db.collection("users").doc(id).get();
+      const exists = userDoc.exists;
+      console.log({ id, exists });
+      return exists;
+    }
+    return false;
+  },
+
   async initUser(id, displayName) {
     if (id) {
       const userDoc = await db.collection("users").doc(id).get();
