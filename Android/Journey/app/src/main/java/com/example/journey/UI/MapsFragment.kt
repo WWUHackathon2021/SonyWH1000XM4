@@ -1,22 +1,21 @@
 package com.example.journey.UI
 
-import android.annotation.SuppressLint
-import android.location.Location
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.journey.DTO.Landmark
 import com.example.journey.R
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
+
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -33,6 +32,39 @@ class MapsFragment : Fragment() {
          * install it inside the SupportMapFragment. This method will only be triggered once the
          * user has installed Google Play services and returned to the app.
          */
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            val success = googleMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                    activity, R.raw.style_json
+                )
+            )
+            if (!success) {
+                Log.e("Failed", "Style parsing failed.")
+            }
+        } catch (e: Resources.NotFoundException) {
+            Log.e("Error", "Can't find style. Error: ", e)
+        }
+        var i = 0
+        var objectMarker = HashMap<Marker, String>()
+
+        var landmarks = GenerateLandmarks()
+        landmarks.forEach {
+            var coord = LatLng(it.latitude, it.longitude)
+            val m = googleMap.addMarker(
+                MarkerOptions()
+                    .position(coord)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.landmark_img))
+            )
+            objectMarker.put(m, "marker$i")
+        }
+
+        googleMap.setOnMarkerClickListener(OnMarkerClickListener { marker ->
+            // collect
+            true
+        })
+
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 18.toFloat()))
         googleMap.addMarker(
             MarkerOptions()
@@ -55,6 +87,11 @@ class MapsFragment : Fragment() {
         mapView = view.findViewById<View>(R.id.mapView) as MapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(callback)
+    }
+
+    private fun GenerateLandmarks(): List<Landmark> {
+        var landmark = Landmark("12345", "Space Needle", location.longitude, location.latitude)
+        return listOf(landmark)
     }
 
     override fun onResume() {
