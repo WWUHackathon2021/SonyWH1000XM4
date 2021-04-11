@@ -24,5 +24,7 @@
     <!-- Automatically generated file. DO NOT MODIFY -->
 
     <!-- Values from build type: debug -->
-    <string name="maps_APIKey" templateMergeStrategy="preserve" translatable="false">MAPS_API_KEY</string>
+    <string name="maps_APIKey" templateMergeStrategy="preserve" translatable="false">
+        MAPS_API_KEY
+    </string>
 </resources>
