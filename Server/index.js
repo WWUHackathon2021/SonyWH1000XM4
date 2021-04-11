@@ -7,6 +7,7 @@ const {
   getAllLandmarks,
   initUser,
   userExists,
+  collectLandmark,
 } = require("./database");
 
 const { OAuth2Client } = require("google-auth-library");
@@ -94,6 +95,23 @@ app.post("/login", (req, res, next) => {
     .catch((err) => {
       console.log({ err });
       return res.status(400).json({ error: "Error verifying token" });
+    });
+});
+
+app.get("/collect/:userID/:landmarkID", (req, res, next) => {
+  const { userID, landmarkID } = req.params;
+  if (!userID) {
+    return res.status(400).json({ error: "userID is empty" });
+  }
+  if (!landmarkID) {
+    return res.status(400).json({ error: "landmarkID is empty" });
+  }
+  collectLandmark(userID, landmarkID)
+    .then(() => {
+      return res.json({ message: "ok" });
+    })
+    .catch((err) => {
+      return res.status(400).json({ error: err.message });
     });
 });
 
