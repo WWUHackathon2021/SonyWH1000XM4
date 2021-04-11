@@ -21,6 +21,28 @@ module.exports = {
     }
   },
 
+  async initUser(id, displayName) {
+    if (id) {
+      const userDoc = await db.collection("users").doc(id).get();
+      if (!userDoc.exists) {
+        const newUser = {
+          displayName,
+          exp: 0,
+          landmarks: [],
+          achievements: [],
+        };
+        db.collection("users")
+          .doc(id)
+          .set(newUser)
+          .catch((err) => {
+            throw err;
+          });
+      } else {
+        throw new Error("User already exists");
+      }
+    }
+  },
+
   async getAllLandmarks() {
     const landmarks = await db.collection("landmarks").get();
     const result = {};
