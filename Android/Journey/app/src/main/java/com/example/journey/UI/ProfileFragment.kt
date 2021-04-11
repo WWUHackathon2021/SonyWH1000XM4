@@ -5,7 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.OrientationHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.journey.R
+import kotlinx.android.synthetic.main.profile_fragment.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,6 +40,20 @@ class ProfileFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.profile_fragment, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val pinNames : ArrayList<String> = ArrayList()
+        val images : ArrayList<String> = ArrayList()
+
+        for (i in 1..25) {
+            pinNames.add("Pin # $i")
+        }
+
+        pin_recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
+        pin_recyclerView.adapter = PinRecyclerViewAdapter(pinNames, images)
     }
 
     companion object {
