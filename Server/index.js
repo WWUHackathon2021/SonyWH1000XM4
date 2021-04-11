@@ -1,7 +1,16 @@
 const express = require("express");
-const { init, getProfile, getAllLandmarks } = require("./database");
+const bodyParser = require("body-parser");
+
+const {
+  init,
+  getProfile,
+  getAllLandmarks,
+  initUser,
+  userExists,
+} = require("./database");
 
 const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
 const port = 5000;
 
 app.get("/ping", (req, res) => {
@@ -39,7 +48,34 @@ app.get("/landmarks", (req, res, next) => {
     });
 });
 
+app.post("/login", (req, res, next) => {
+  const { id, name } = req.body;
+  if (!id) {
+    return res.status(400).json({ error: "id is empty" });
+  }
+  userExists(id).then((exists) => {
+    if (exists) {
+      return res.json({ message: "ok" });
+    } else {
+      if (!name) {
+        return res.status(404).json({
+          error:
+            "id not found, please try again and specify a name to initialize your account",
+        });
+      } else {
+        initUser(id, name)
+          .then(() => {
+            return res.json({ message: "ok" });
+          })
+          .catch((err) => {
+            next(err);
+          });
+      }
+    }
+  });
+});
+
 app.listen(port, () => {
-  console.log(`Hello world app listening on http://localhost:${port}`);
+  console.log(`Application listening on http://localhost:${port}`);
   init();
 });
