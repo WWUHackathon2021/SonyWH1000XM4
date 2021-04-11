@@ -3,9 +3,12 @@ package com.example.journey
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.journey.UI.MapsFragment
+import com.example.journey.UI.ProfileFragment
 import com.fondesa.kpermissions.PermissionStatus
 import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
@@ -17,6 +20,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.PointOfInterest
+import com.google.android.gms.maps.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.profile_fragment.*
 
 
 class MainActivity : AppCompatActivity(), PermissionRequest.Listener, OnMapReadyCallback, GoogleMap.OnPoiClickListener  {
@@ -29,6 +35,7 @@ class MainActivity : AppCompatActivity(), PermissionRequest.Listener, OnMapReady
     }
 
     private lateinit var mMap: GoogleMap
+    private lateinit var mainFragment: MapsFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,40 +43,34 @@ class MainActivity : AppCompatActivity(), PermissionRequest.Listener, OnMapReady
         request.addListener(this)
         request.send()
 
-
         setContentView(R.layout.activity_main)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        // add fragment on top of container (first initialization)
+        val mapFragment = MapsFragment()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, mapFragment)
+            .commit()
 
-
-
-        /*
-        button.setOnClickListener {
-
-            if (!profilepage){
-                val fragment = ProfileFragment.newInstance("","")
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.map, fragment)
-                    .commitNow()
-
+        profileButton.setOnClickListener{
+            if (!profilepage) {
+                val profileFragment = ProfileFragment()
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, profileFragment)
+                    .addToBackStack(null)
+                    .commit()
             }
             else {
-                val fragment = MapsFragment()
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.main, fragment)
-                    .commitNow()
+                supportFragmentManager.popBackStack()
             }
-
-            profilepage = !profilepage
+            profilepage  = !profilepage
         }
-         */
     }
 
     fun showGrantedToast() {
         Toast.makeText(this, "Permission accepted", Toast.LENGTH_LONG).show()
     }
+
     override fun onPermissionsResult(result: List<PermissionStatus>) {
         when {
             result.allGranted() -> showGrantedToast()
