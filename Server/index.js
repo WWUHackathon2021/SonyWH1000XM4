@@ -9,6 +9,23 @@ const {
   userExists,
 } = require("./database");
 
+const { OAuth2Client } = require("google-auth-library");
+const { clientID } = require("./config.json");
+const authClient = new OAuth2Client(clientID);
+
+async function verify(idToken) {
+  if (idToken) {
+    const ticket = await authClient.verifyIdToken({
+      idToken,
+      audience: clientID,
+    });
+    const payload = ticket.getPayload();
+    return payload;
+  } else {
+    throw new Error("empty idToken");
+  }
+}
+
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 const port = 5000;
@@ -49,29 +66,34 @@ app.get("/landmarks", (req, res, next) => {
 });
 
 app.post("/login", (req, res, next) => {
-  const { id, name } = req.body;
-  if (!id) {
-    return res.status(400).json({ error: "id is empty" });
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ error: "token is empty" });
   }
-  userExists(id).then((exists) => {
-    if (exists) {
-      return res.json({ message: "ok" });
-    } else {
-      if (!name) {
-        return res.status(404).json({
-          error:
-            "id not found, please try again and specify a name to initialize your account",
-        });
-      } else {
-        initUser(id, name)
-          .then(() => {
-            return res.json({ message: "ok" });
-          })
-          .catch((err) => {
-            next(err);
-          });
-      }
-    }
+  let id;
+  let name;
+  verify(token).then((payload) => {
+    id = payload.sub;
+    name = payload.name;
+    userExists(id)
+      .then((exists) => {
+        if (exists) {
+          return res.json({ message: "ok", id });
+        } else {
+          initUser(id, name)
+            .then(() => {
+              return res.json({ message: "ok", id });
+            })
+            .catch((err) => {
+              console.log({ err });
+              next(err);
+            });
+        }
+      })
+      .catch((err) => {
+        console.log({ err });
+        return res.status(400).json({ error: "Error verifying token" });
+      });
   });
 });
 
