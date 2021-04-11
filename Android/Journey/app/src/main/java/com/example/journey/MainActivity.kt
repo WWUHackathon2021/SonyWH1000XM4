@@ -2,6 +2,7 @@ package com.example.journey
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -33,9 +34,12 @@ class MainActivity : AppCompatActivity(), PermissionRequest.Listener, OnMapReady
             Manifest.permission.ACCESS_FINE_LOCATION
         ).build()
     }
+    //(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+    //            == PackageManager.PERMISSION_GRANTED)
 
     private lateinit var mMap: GoogleMap
     private lateinit var mainFragment: MapsFragment
+    private var locationManager : LocationManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +48,13 @@ class MainActivity : AppCompatActivity(), PermissionRequest.Listener, OnMapReady
         request.send()
 
         setContentView(R.layout.activity_main)
+
+        // get user location
+        // Create persistent LocationManager reference
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
+
         // add fragment on top of container (first initialization)
+        // pass longitude latitude to fragment
         val mapFragment = MapsFragment()
         supportFragmentManager
             .beginTransaction()
