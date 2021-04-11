@@ -72,11 +72,11 @@ app.post("/login", (req, res, next) => {
   }
   let id;
   let name;
-  verify(token).then((payload) => {
-    id = payload.sub;
-    name = payload.name;
-    userExists(id)
-      .then((exists) => {
+  verify(token)
+    .then((payload) => {
+      id = payload.sub;
+      name = payload.name;
+      userExists(id).then((exists) => {
         if (exists) {
           return res.json({ message: "ok", id });
         } else {
@@ -89,12 +89,12 @@ app.post("/login", (req, res, next) => {
               next(err);
             });
         }
-      })
-      .catch((err) => {
-        console.log({ err });
-        return res.status(400).json({ error: "Error verifying token" });
       });
-  });
+    })
+    .catch((err) => {
+      console.log({ err });
+      return res.status(400).json({ error: "Error verifying token" });
+    });
 });
 
 app.listen(port, () => {
