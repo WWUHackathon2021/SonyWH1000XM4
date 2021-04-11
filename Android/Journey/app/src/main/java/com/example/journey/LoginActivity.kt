@@ -1,17 +1,11 @@
 package com.example.journey
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.ImageButton
+import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.profile_ui.*
@@ -37,9 +31,10 @@ class LoginActivity : AppCompatActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         loginButton.setOnClickListener {
-            signInTest()
-            //signIn()
+//            signInTest()
+            signIn()
         }
+
     }
 
     private fun signInTest() {
@@ -48,14 +43,40 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signIn() {
-        val signInIntent = mGoogleSignInClient.signInIntent
-        Toast.makeText(this, "gets here", Toast.LENGTH_LONG).show()
+        val signInIntent = mGoogleSignInClient.getSignInIntent()
         startActivityForResult(signInIntent, RC_SIGN_IN);
 
     }
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
+        if (requestCode == RC_SIGN_IN){
+            Toast.makeText(this, "DONE SIGNING IN", Toast.LENGTH_LONG).show()
+
+            var task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            val Intent = Intent(this, MainActivity::class.java)
+            startActivity(Intent)
+            val idToken = account!!.idToken
+            Toast.makeText(this, "id_token" + idToken, Toast.LENGTH_LONG).show()
+
+
+            // TODO(developer): send ID Token to server and validate
+
+        } catch (e: ApiException) {
+
+            Log.v("SignInActivity", "handleSignInResult:error", e)
+
+        }
+    }
 
 
 }
