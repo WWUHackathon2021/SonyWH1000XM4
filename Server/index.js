@@ -77,11 +77,12 @@ app.post("/login", (req, res, next) => {
     .then((payload) => {
       id = payload.sub;
       name = payload.name;
+      picURL = payload.picture || "";
       userExists(id).then((exists) => {
         if (exists) {
           return res.json({ message: "ok", id });
         } else {
-          initUser(id, name)
+          initUser(id, name, picURL)
             .then(() => {
               return res.json({ message: "ok", id });
             })

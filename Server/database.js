@@ -31,12 +31,13 @@ module.exports = {
     return false;
   },
 
-  async initUser(id, displayName) {
+  async initUser(id, displayName, picture) {
     if (id) {
       const userDoc = await db.collection("users").doc(id).get();
       if (!userDoc.exists) {
         const newUser = {
           displayName,
+          picture,
           exp: 0,
           landmarks: [],
           achievements: [],
