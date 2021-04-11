@@ -7,6 +7,7 @@ const {
   getAllLandmarks,
   initUser,
   userExists,
+  collectLandmark,
 } = require("./database");
 
 const { OAuth2Client } = require("google-auth-library");
@@ -72,11 +73,11 @@ app.post("/login", (req, res, next) => {
   }
   let id;
   let name;
-  verify(token).then((payload) => {
-    id = payload.sub;
-    name = payload.name;
-    userExists(id)
-      .then((exists) => {
+  verify(token)
+    .then((payload) => {
+      id = payload.sub;
+      name = payload.name;
+      userExists(id).then((exists) => {
         if (exists) {
           return res.json({ message: "ok", id });
         } else {
@@ -89,12 +90,29 @@ app.post("/login", (req, res, next) => {
               next(err);
             });
         }
-      })
-      .catch((err) => {
-        console.log({ err });
-        return res.status(400).json({ error: "Error verifying token" });
       });
-  });
+    })
+    .catch((err) => {
+      console.log({ err });
+      return res.status(400).json({ error: "Error verifying token" });
+    });
+});
+
+app.get("/collect/:userID/:landmarkID", (req, res, next) => {
+  const { userID, landmarkID } = req.params;
+  if (!userID) {
+    return res.status(400).json({ error: "userID is empty" });
+  }
+  if (!landmarkID) {
+    return res.status(400).json({ error: "landmarkID is empty" });
+  }
+  collectLandmark(userID, landmarkID)
+    .then(() => {
+      return res.json({ message: "ok" });
+    })
+    .catch((err) => {
+      return res.status(400).json({ error: err.message });
+    });
 });
 
 app.listen(port, () => {
