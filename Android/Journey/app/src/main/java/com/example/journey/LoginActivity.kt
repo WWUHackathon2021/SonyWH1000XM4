@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity(){
 
     }
 
-    private fun signInTest() {
+    private fun moveToMainActivity() {
         val Intent = Intent(this, MainActivity::class.java)
         startActivity(Intent)
     }
@@ -71,7 +71,7 @@ class LoginActivity : AppCompatActivity(){
             val account = completedTask.getResult(ApiException::class.java)
             val idToken = account!!.idToken
             sendRequest(idToken!!)
-            signInTest()
+            moveToMainActivity()
 
 
 
@@ -92,10 +92,7 @@ class LoginActivity : AppCompatActivity(){
                     Request.Method.POST,
                     LOGIN,
                     { response ->
-                        // Display the first 500 characters of the response string.
                         var msg = token
-                        Toast.makeText(this, "msg: "+msg, Toast.LENGTH_LONG).show()
-
                     },
                     { error ->
                         var msg = "That didn't work!"
